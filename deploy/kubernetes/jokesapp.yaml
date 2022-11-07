@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jokesapp
+  namespace: jokes
+  labels:
+    app.kubernetes.io/name: jokesapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jokesapp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: jokesapp
+    spec:
+      containers:
+        - name: jokesapp
+          image: nemadern/chuck-norris-jokes:0.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          resources:
+            limits:
+              cpu: 150m
+              memory: 256M
+            requests:
+              cpu: 75m
+              memory: 128M

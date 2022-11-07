@@ -1,0 +1,65 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: nginx-ingress-allow
+  namespace: jokes
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: jokes
+  - ports:
+    - port: 80
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      app: nginx-proxy
+  policyTypes:
+  - Ingress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: jokesapp-ingress-allow
+  namespace: jokes
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: jokesapp
+  policyTypes:
+  - Ingress
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 5000
+      from:
+      - namespaceSelector:
+          matchLabels:
+            name: jokes
+      - podSelector:
+          matchLabels:
+            app: nginx-proxy
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: mongodb-ingress-allow
+  namespace: jokes
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: mongodb
+  policyTypes:
+  - Ingress
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 27017
+      from:
+      - namespaceSelector:
+          matchLabels:
+            name: jokes
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: jokesapp

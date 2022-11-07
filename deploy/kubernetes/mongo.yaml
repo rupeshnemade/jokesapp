@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: jokes
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mongodb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: storage
+              mountPath: /data/db
+          resources:
+            limits:
+              cpu: 150m
+              memory: 256M
+            requests:
+              cpu: 75m
+              memory: 128M
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: mongodb-pvc
